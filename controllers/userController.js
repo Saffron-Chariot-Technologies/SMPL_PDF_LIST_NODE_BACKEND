@@ -31,8 +31,26 @@ exports.login = async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials" });
     }
     const payload = { userId: user.id };
-    const token = jwt.sign(payload, "secret", { expiresIn: "1h" });
-    res.json({ token });
+    const token = jwt.sign(payload, "secret");
+    res.json({
+      token,
+      userData: { _id: user._id, name: user?.name, email: user?.email },
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+exports.getMe = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(400).json({ msg: "user not available" });
+    }
+
+    res.json({ user });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
