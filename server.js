@@ -5,7 +5,7 @@ const userRoutes = require("./routes/userRoutes");
 const urlRoutes = require("./routes/urlRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3008;
 const DB_URI = "mongodb+srv://dbUser:abhayaks@cluster0.a0wvhwr.mongodb.net/";
 // WYHbdCbygXg74QGl
 app.use(bodyParser.json());
