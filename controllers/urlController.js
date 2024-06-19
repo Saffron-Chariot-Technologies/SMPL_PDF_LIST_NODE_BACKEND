@@ -49,7 +49,7 @@ exports.createUrl = async (req, res) => {
 exports.getUrls = async (req, res) => {
   const userId = req.user.userId;
   try {
-    const urls = await Url.find({ userId });
+    const urls = await Url.find();
     res.json(urls);
   } catch (err) {
     res.status(500).json({ error: err.message });
