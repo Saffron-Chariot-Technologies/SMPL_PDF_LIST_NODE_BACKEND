@@ -20,18 +20,22 @@ exports.createUrl = async (req, res) => {
 
     const params = {
       Bucket: "smpl-pdf",
-      Key: file.originalname,
+      Key: file.originalname + new Date(),
       Body: file.buffer,
       ContentType: file.mimetype,
     };
-    console.log(params);
     s3.upload(params, async (err, data) => {
       if (err) {
         console.error("Error uploading file:", err);
         return res.status(500).send(err);
       }
       // res.status(200).send({ url: data });
-      const newUrl = new Url({ url: data.Location, userId, date });
+      const newUrl = new Url({
+        url: data.Location,
+        userId,
+        date,
+        urlKeyName: data?.Key,
+      });
       const savedData = await newUrl.save();
 
       res.status(201).json(savedData);
@@ -67,8 +71,24 @@ exports.deleteUrl = async (req, res) => {
     if (url.userId.toString() !== userId) {
       return res.status(401).json({ msg: "User not authorized" });
     }
-    await Url.findByIdAndDelete(id); // Using findByIdAndDelete instead of remove
-    res.json({ msg: "Url removed" });
+
+    // Extract the file name from the URL
+    // const fileName = path.basename(url.url);
+    const deleteParams = {
+      Bucket: "smpl-pdf",
+      Key: url?.urlKeyName,
+    };
+
+    // Delete the file from S3
+    s3.deleteObject(deleteParams, async (err, data) => {
+      if (err) {
+        console.error("Error deleting file from S3:", err);
+        return res.status(500).json({ error: "Error deleting file from S3" });
+      }
+      // Delete the URL document from the database
+      // await Url.findByIdAndDelete(id);
+      res.json({ msg: "Url removed and file deleted from S3" });
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
