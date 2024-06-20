@@ -86,7 +86,7 @@ exports.deleteUrl = async (req, res) => {
         return res.status(500).json({ error: "Error deleting file from S3" });
       }
       // Delete the URL document from the database
-      // await Url.findByIdAndDelete(id);
+      await Url.findByIdAndDelete(id);
       res.json({ msg: "Url removed and file deleted from S3" });
     });
   } catch (err) {
