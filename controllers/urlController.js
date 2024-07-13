@@ -37,7 +37,6 @@ exports.createUrl = async (req, res) => {
         urlKeyName: data?.Key,
       });
       const savedData = await newUrl.save();
-
       res.status(201).json(savedData);
     });
 
@@ -50,6 +49,7 @@ exports.createUrl = async (req, res) => {
   }
 };
 
+
 exports.getUrls = async (req, res) => {
   const userId = req.user.userId;
   try {
@@ -59,6 +59,7 @@ exports.getUrls = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
 
 exports.deleteUrl = async (req, res) => {
   const { id } = req.params;
