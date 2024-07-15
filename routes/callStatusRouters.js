@@ -1,15 +1,15 @@
 const express = require("express");
 const router = express.Router();
+const upload=require("../middleware/imageMiddleware.js");
 const {
-  createUrl,
-  getUrls,
-  deleteUrl,
-} = require("../controllers/urlController");
+ addCallStatus 
+} = require("../controllers/calllStatusController.js");
 
-const upload = multer({ storage: multer.memoryStorage() });
 
-router.post("/", upload.single("file"), auth, createUrl);
-router.get("/", auth, getUrls);
-router.delete("/:id", auth, deleteUrl);
+router.post("/addCallStatus", upload.fields([
+  { name: 'file1', maxCount: 1 },
+  { name: 'file2', maxCount: 1 }
+]), auth, addCallStatus);
+
 
 module.exports = router;

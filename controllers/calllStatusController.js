@@ -1,10 +1,9 @@
-import callStatusModel from "../models/callStatusModel";
+const callStatusModel = require("../models/callStatusModel");
 
-export const addCallStatus=async(req,res)=>{
+exports.addCallStatus = async (req, res) => {
     try {
 
-    const result=await callStatusModel.
     } catch (error) {
-        
+
     }
 }

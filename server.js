@@ -3,6 +3,9 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const userRoutes = require("./routes/userRoutes");
 const urlRoutes = require("./routes/urlRoutes");
+const callstatusRoutes=require("./routes/callStatusRouters");
+
+
 const cors = require("cors");
 
 const app = express();
@@ -17,6 +20,8 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.log(err));
 
+
+app.use("/api/callStatus",callstatusRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/urls", urlRoutes);
 app.get("/", (req, res) => {
@@ -27,5 +32,3 @@ app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-
-\

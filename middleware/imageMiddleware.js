@@ -33,4 +33,4 @@ const upload_images = multer({
     storage: s3Storage,
 });
 
-export {upload_images};
+module.exports = upload_images;
