@@ -1,4 +1,4 @@
-const callStatusModel = require("../models/callStatusModel");
+const callStatusModel = require("../models/CallStatusModel.js");
 
 exports.addCallStatus = async (req, res) => {
     try {
