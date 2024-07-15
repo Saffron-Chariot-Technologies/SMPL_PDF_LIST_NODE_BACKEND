@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+const auth = require("../middleware/auth");
 const upload=require("../middleware/imageMiddleware.js");
 const {
  addCallStatus 
@@ -7,9 +8,9 @@ const {
 
 
 router.post("/addCallStatus", upload.fields([
-  { name: 'file1', maxCount: 1 },
-  { name: 'file2', maxCount: 1 }
-]), auth, addCallStatus);
+  { name: 'graph', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]),addCallStatus);
 
 
 module.exports = router;

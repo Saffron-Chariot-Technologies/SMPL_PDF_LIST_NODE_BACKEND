@@ -2,7 +2,6 @@ const { S3Client } = require("@aws-sdk/client-s3");
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 
-dotenv.config();
 
 const accessKeyId ="AKIAVZ6E5QCDEKTIX46H";
 const secretAccessKey ="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";
