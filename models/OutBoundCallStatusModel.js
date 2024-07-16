@@ -7,8 +7,8 @@ const OutBoundCallStatusSchema=new mongoose.Schema({
         required:true
     },
     date:{type:Date,required:true},
-    image:{type:String,required:true},
+    image:{type:String,required:false},
     type:{type:String,required:true}
-},{timestamps:true})
+},{timestamps:true});
 
-exports.module=mongoose.model("OutBoundCallStatus",OutBoundCallStatusSchema);
+module.exports=mongoose.model("OutBoundCallStatus",OutBoundCallStatusSchema);

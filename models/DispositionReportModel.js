@@ -1,6 +1,6 @@
 const mongoose =require("mongoose");
 
-const districtReportSchema=new mongoose.Schema({
+const dispositionReportSchema=new mongoose.Schema({
  userId:{
     type:mongoose.Schema.Types.ObjectId,
     ref:"User",
@@ -9,8 +9,9 @@ const districtReportSchema=new mongoose.Schema({
  type:{type:String,required:true},
  date:{type:Date,required:true},
  excel:{type:String,required:false},
- graph:{type:String,required:false}
+ graph:{type:String,required:false},
+ image:{type:String,required:false},
 }
 );
 
-module.exports=mongoose.model("DistrictReport",districtReportSchema);
+module.exports=mongoose.model("DispositionReport",dispositionReportSchema);
