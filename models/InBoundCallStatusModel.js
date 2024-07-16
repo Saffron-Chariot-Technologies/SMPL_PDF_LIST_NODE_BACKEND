@@ -9,11 +9,12 @@ const CallsStatusSchema = new mongoose.Schema(
         answeredPercentage: { type: Number, required: true },
         graph: {type:String, required: false },
         image: {type:String, required: false },
-        // userId: {
-        //     type: mongoose.Schema.Types.ObjectId,
-        //     ref: "User",
-        //     required: true,
-        // },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+            required: true,
+        },
+        type:{type:String,required:true}  //  input should be "monthly" , or "daily"  , for filtering data based on monthly or daily eneterd data.
     },
     { timestamps: true }
 ); // This adds createdAt and updatedAt fields
