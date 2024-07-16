@@ -13,7 +13,9 @@ const PORT = process.env.PORT || 3008;
 const DB_URI = "mongodb+srv://dbUser:abhayaks@cluster0.a0wvhwr.mongodb.net/";
 // WYHbdCbygXg74QGl
 app.use(bodyParser.json());
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}));
 
 mongoose
   .connect(DB_URI)
