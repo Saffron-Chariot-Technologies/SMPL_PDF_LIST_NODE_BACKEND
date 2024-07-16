@@ -1,5 +1,5 @@
 const callStatusModel = require("../models/InBoundCallStatusModel.js");
-
+const OutBoundCallStatusModel = require("../models/OutBoundCallStatusModel.js");
 exports.addCallStatusInBound = async (req, res) => {
   try {
     // console.log(req.user,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
@@ -33,7 +33,7 @@ exports.addCallStatusInBound = async (req, res) => {
 }
 
 
-// API to get data
+// API to get data by single date
 exports.getCallStatusData = async (req, res) => {
   try {
     // console.log(req.query.status);
@@ -68,19 +68,52 @@ exports.updateInBoundCallStatus = async (req, res) => {
     }
 
     toInsert.userId = req.user.userId;
-    const updatedData=await callStatusModel.findOneAndUpdate(
-      {type:toInsert?.type,date:toInsert?.date},
-      {$set:toInsert},
-      {new:true});
+    const updatedData = await callStatusModel.findOneAndUpdate(
+      { type: toInsert?.type, date: toInsert?.date },
+      { $set: toInsert },
+      { new: true });
 
-      if(!updatedData)
-      {
-        return res.status(200).json({ message: "data not found to update" });
-      }
-      return res.status(200).json({ message: "data updated success",data:updatedData });
+    if (!updatedData) {
+      return res.status(200).json({ message: "data not found to update" });
+    }
+    return res.status(200).json({ message: "data updated success", data: updatedData });
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
 
   }
 }
 
+
+
+
+
+//######################################  OUTBOUND CALL STATUS APIS
+
+exports.addOutBoundCallStatus = async (req, res) => {
+  try {
+    let toInsert;
+    if (Object.entries(req.files).length !== 0) {
+      toInsert = JSON.parse(req.body.data);
+      for (let i in req.files) {
+        toInsert[i] = req.files[i][0]?.location;
+        // console.log(i);
+      }
+    } else {
+      toInsert = JSON.parse(req.body.data);
+    }
+
+    toInsert.userId = req.user.userId;
+    const outBoundData = new OutBoundCallStatusModel(toInsert);
+    const result = await outBoundData.save();
+    if (result) {
+      return res.status(200).json({ message: "data added successfully", data: result });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+
+  }
+}
+
+
+
+//#########################################
