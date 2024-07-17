@@ -51,9 +51,9 @@ router.get("/getDistrictReportByDate",auth,getDistrictReportsByDate);
 
 //disposition report
 router.post("/addDispositionReport", upload.fields([
-  { name: 'excel', maxCount: 1 },
+  { name: 'table1', maxCount: 1 },
   { name: 'graph', maxCount: 1 },
-  { name: 'image', maxCount: 1 },
+  { name: 'table2', maxCount: 1 },
 ]),auth,addDispositionReport);
 
 router.get("/getDispositionReportByDate",auth,getDispositionReportByDate);
