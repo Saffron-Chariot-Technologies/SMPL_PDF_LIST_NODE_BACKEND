@@ -2,6 +2,7 @@ const DispositionReportModel = require("../models/DispositionReportModel.js");
 const DistrictReportModel = require("../models/DistrictReportModel.js");
 const callStatusModel = require("../models/InBoundCallStatusModel.js");
 const OutBoundCallStatusModel = require("../models/OutBoundCallStatusModel.js");
+const SampleCallModel = require("../models/SampleCallModel.js");
 
 exports.addCallStatusInBound = async (req, res) => {
   try {
@@ -261,5 +262,33 @@ exports.getDispositionReportByDate=async(req,res)=>{
 
 
 
-//#########################################################  frontend APIs
+//#########################################################  Samplecall APIs
+exports.addSampleCalls=async(req,res)=>{
+  try {
+    let toInsert;
+    if (Object.entries(req.files).length !== 0) {
+      toInsert = JSON.parse(req.body.data);
+      for (let i in req.files) {
+        toInsert[i] = req.files[i][0]?.location;
+        // console.log(i);
+      }
+    } else {
+      toInsert = JSON.parse(req.body.data);
+    }
 
+    toInsert.userId = req.user.userId;
+  // console.log(toInsert,"HGFFHFG");
+  const alreadyPresent = await SampleCallModel.findOne({ type: toInsert.type, date: toInsert.date });
+  if (alreadyPresent) {
+    return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+  }
+    const sampleCallData = new SampleCallModel(toInsert);
+    const result = await sampleCallData.save();
+    if (result) {
+      return res.status(200).json({ message: "data added successfully", data: result });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+
+  }
+}
