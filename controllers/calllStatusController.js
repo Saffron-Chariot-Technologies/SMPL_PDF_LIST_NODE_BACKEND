@@ -121,6 +121,11 @@ exports.addOutBoundCallStatus = async (req, res) => {
     }
 
     toInsert.userId = req.user.userId;
+    // console.log(toInsert,"HGFFHFG");
+    const alreadyPresent = await OutBoundCallStatusModel.findOne({ type: toInsert.type, date: toInsert.date });
+    if (alreadyPresent) {
+      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+    }
     const outBoundData = new OutBoundCallStatusModel(toInsert);
     const result = await outBoundData.save();
     if (result) {
@@ -166,6 +171,11 @@ exports.addDistrictReport = async (req, res) => {
     }
 
     toInsert.userId = req.user.userId;
+    // console.log(toInsert,"HGFFHFG");
+    const alreadyPresent = await DistrictReportModel.findOne({ type: toInsert.type, date: toInsert.date });
+    if (alreadyPresent) {
+      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+    }
     const districtReportData = new DistrictReportModel(toInsert);
     const result = await districtReportData.save();
     if (result) {
@@ -213,6 +223,11 @@ exports.addDispositionReport=async(req,res)=>{
     }
 
     toInsert.userId = req.user.userId;
+  // console.log(toInsert,"HGFFHFG");
+  const alreadyPresent = await DispositionReportModel.findOne({ type: toInsert.type, date: toInsert.date });
+  if (alreadyPresent) {
+    return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+  }
     const dispositionReportData = new DispositionReportModel(toInsert);
     const result = await dispositionReportData.save();
     if (result) {

@@ -8,9 +8,9 @@ const dispositionReportSchema=new mongoose.Schema({
  },
  type:{type:String,required:true},
  date:{type:Date,required:true},
- excel:{type:String,required:false},
+ table1:{type:String,required:false},
  graph:{type:String,required:false},
- image:{type:String,required:false},
+ table2:{type:String,required:false},
 }
 );
 
