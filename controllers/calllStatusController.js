@@ -2,9 +2,10 @@ const DispositionReportModel = require("../models/DispositionReportModel.js");
 const DistrictReportModel = require("../models/DistrictReportModel.js");
 const callStatusModel = require("../models/InBoundCallStatusModel.js");
 const OutBoundCallStatusModel = require("../models/OutBoundCallStatusModel.js");
+
 exports.addCallStatusInBound = async (req, res) => {
   try {
-    // console.log(req.user,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
+    // console.log(req,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
     let toInsert;
     if (Object.entries(req.files).length !== 0) {
@@ -19,6 +20,7 @@ exports.addCallStatusInBound = async (req, res) => {
 
     toInsert.userId = req.user.userId;
 
+    // console.log(toInsert,"HGFFHFG");
     const alreadyPresent = await callStatusModel.findOne({ type: toInsert.type, date: toInsert.date });
     if (alreadyPresent) {
       return res.status(409).json({ message: "same date data already entered", alreadyPresent });
@@ -82,6 +84,25 @@ exports.updateInBoundCallStatus = async (req, res) => {
 }
 
 
+// API to get data by single date:: frontend APIs
+exports.getCallStatusDataByDate = async (req, res) => {
+  try {
+    // console.log(req.query.status);
+    // console.log(req.query.date);
+    const type = req.query.type; // daily or monthly
+    let date = req.query.date;
+    date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
+    const toReturn = await callStatusModel.findOne({ type: type, date: date });
+    if (!toReturn) {
+      return res.status(200).json({ message: "data not found for ths date and type" });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
 
 
 //######################################  OUTBOUND CALL STATUS APIS
@@ -111,7 +132,23 @@ exports.addOutBoundCallStatus = async (req, res) => {
   }
 }
 
+exports.getOutBoundCallStatusByDate=async(req,res)=>{
+  try {
+    // console.log(req.query.status);
+    // console.log(req.query.date);
+    const type = req.query.type; // daily or monthly
+    let date = req.query.date;
+    date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
+    const toReturn = await OutBoundCallStatusModel.findOne({ type: type, date: date });
+    if (!toReturn) {
+      return res.status(200).json({ message: "data not found for ths date and type" });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn });
 
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
 
 //######################################### District report APIs
 
@@ -140,6 +177,24 @@ exports.addDistrictReport = async (req, res) => {
   }
 }
 
+
+exports.getDistrictReportsByDate=async(req,res)=>{
+  try {
+    // console.log(req.query.status);
+    // console.log(req.query.date);
+    const type = req.query.type; // daily or monthly
+    let date = req.query.date;
+    date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
+    const toReturn = await DistrictReportModel.findOne({ type: type, date: date });
+    if (!toReturn) {
+      return res.status(200).json({ message: "data not found for ths date and type" });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
 
 
 //##############################################   Disposition Report  APIs
@@ -170,19 +225,15 @@ exports.addDispositionReport=async(req,res)=>{
 }
 
 
-
-
-
-//#########################################################  frontend APIs
-// API to get data by single date
-exports.getCallStatusData = async (req, res) => {
+//API used in frontend 
+exports.getDispositionReportByDate=async(req,res)=>{
   try {
     // console.log(req.query.status);
     // console.log(req.query.date);
     const type = req.query.type; // daily or monthly
     let date = req.query.date;
     date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
-    const toReturn = await callStatusModel.findOne({ type: type, date: date });
+    const toReturn = await DispositionReportModel.findOne({ type: type, date: date });
     if (!toReturn) {
       return res.status(200).json({ message: "data not found for ths date and type" });
     }
@@ -192,3 +243,8 @@ exports.getCallStatusData = async (req, res) => {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
+
+
+
+//#########################################################  frontend APIs
+
