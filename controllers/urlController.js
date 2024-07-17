@@ -51,7 +51,7 @@ exports.createUrl = async (req, res) => {
 
 
 exports.getUrls = async (req, res) => {
-  const userId = req.user.userId;
+  // const userId = req.user.userId;
   try {
     const urls = await Url.find();
     res.json(urls);

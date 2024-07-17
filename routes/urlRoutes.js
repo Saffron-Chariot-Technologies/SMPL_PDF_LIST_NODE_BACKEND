@@ -14,7 +14,7 @@ const path = require("path");
 const upload = multer({ storage: multer.memoryStorage() });
 
 router.post("/", upload.single("file"), auth, createUrl);
-router.get("/", auth, getUrls);
+router.get("/", getUrls);
 router.delete("/:id", auth, deleteUrl);
 
 module.exports = router;
