@@ -7,6 +7,7 @@ const CallsStatusSchema = new mongoose.Schema(
         overAllAnswered: { type: Number, required: true },
         overAllAbandoned: { type: Number, required: true },
         answeredPercentage: { type: Number, required: true },
+        ACHT: { type: Number, required: true },
         graph: {type:String, required: false },
         image: {type:String, required: false },
         userId: {

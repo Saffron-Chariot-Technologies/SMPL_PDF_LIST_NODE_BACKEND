@@ -140,8 +140,6 @@ exports.addOutBoundCallStatus = async (req, res) => {
 
 exports.getOutBoundCallStatusByDate=async(req,res)=>{
   try {
-    // console.log(req.query.status);
-    // console.log(req.query.date);
     const type = req.query.type; // daily or monthly
     let date = req.query.date;
     date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
