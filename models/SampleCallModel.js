@@ -9,6 +9,6 @@ const sampleCallSchema=new mongoose.Schema({
      type:{type:String,required:true},
      date:{type:Date,required:true},
      voiceCall:{type:String,required:false},
-},{timeseries:true})
+},{timestamps:true})
 
 module.exports=mongoose.model("SampleCalls",sampleCallSchema);

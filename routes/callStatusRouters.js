@@ -13,7 +13,8 @@ const {
   getDistrictReportsByDate,
   addDispositionReport,
   getDispositionReportByDate,
-  addSampleCalls
+  addSampleCalls,
+  getSampleCallByDate
 
 } = require("../controllers/calllStatusController.js");
 
@@ -64,8 +65,7 @@ router.get("/getDispositionReportByDate",auth,getDispositionReportByDate);
 //samplecall APIs
 
 router.post("/addSampleCall",upload.fields([{name: 'voiceCall', maxCount: 1}]),auth,addSampleCalls);
-//######### belw this API for showing data in SMPL frontedn will be made
-
+router.get("/getSampleCallStatus",auth,getSampleCallByDate);
 
 module.exports = router;
 
