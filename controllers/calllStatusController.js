@@ -1,5 +1,6 @@
 const DispositionReportModel = require("../models/DispositionReportModel.js");
 const DistrictReportModel = require("../models/DistrictReportModel.js");
+const InBoundCallStatusModel = require("../models/InBoundCallStatusModel.js");
 const callStatusModel = require("../models/InBoundCallStatusModel.js");
 const OutBoundCallStatusModel = require("../models/OutBoundCallStatusModel.js");
 const SampleCallModel = require("../models/SampleCallModel.js");
@@ -38,20 +39,34 @@ exports.addCallStatusInBound = async (req, res) => {
 }
 
 
-
-exports.getAllInBoundCallStatusData=async(req,res)=>{
+//get API to inBoundCallStatus by type : daily or monthly data
+exports.getAllInBoundCallStatusData = async (req, res) => {
   try {
-    const type=req.query.type;
-    const page=parseInt(req.query.page)||1;
-    const limit=parseInt(req.query.limit)||15;
-    const skip=(page-1)*limit;
-    const inBoundCallStatusData=await callStatusModel.find({type:type}).sort({date:-1}).skip(skip).limit(limit);
-     return res.status(200).json({message:"data found",data:inBoundCallStatusData});
+    const type = req.query.type;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    const inBoundCallStatusData = await callStatusModel.find({ type: type }).sort({ date: -1 }).skip(skip).limit(limit);
+    return res.status(200).json({ message: "data found", data: inBoundCallStatusData });
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
 
+
+exports.deleteInBoundById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await InBoundCallStatusModel.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
 
 //API to edit the Incbound callstatus by date and status
 exports.updateInBoundCallStatus = async (req, res) => {
@@ -68,9 +83,9 @@ exports.updateInBoundCallStatus = async (req, res) => {
     }
 
     toInsert.userId = req.user.userId;
-    const dataId=req.params.id
+    const dataId = req.params.id
     const updatedData = await callStatusModel.findByIdAndUpdate(
-      {_id:dataId},
+      { _id: dataId },
       { $set: toInsert },
       { new: true });
 
@@ -105,6 +120,44 @@ exports.getCallStatusDataByDate = async (req, res) => {
 }
 
 
+//API to get all inBoundCallStatus which has type daily.
+exports.getInboundByMonth = async (req, res) => {
+  try {
+
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      date = new Date();
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const toReturn = await InBoundCallStatusModel.find({
+      type:"daily",
+      date: {
+        $gte: new Date(year, month, 1),
+        $lt: new Date(year, month + 1, 1)
+      }
+    }).sort({ date: -1 }).skip(skip).limit(limit);
+    
+    if (toReturn.length===0) {
+      return res.status(200).json({ message: "data not found for this month" ,data:toReturn});
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
 
 //######################################  OUTBOUND CALL STATUS APIS
 
@@ -138,7 +191,7 @@ exports.addOutBoundCallStatus = async (req, res) => {
   }
 }
 
-exports.getOutBoundCallStatusByDate=async(req,res)=>{
+exports.getOutBoundCallStatusByDate = async (req, res) => {
   try {
     const type = req.query.type; // daily or monthly
     let date = req.query.date;
@@ -154,6 +207,22 @@ exports.getOutBoundCallStatusByDate=async(req,res)=>{
   }
 }
 
+
+
+
+exports.deleteOutBoundById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await OutBoundCallStatusModel.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
 //######################################### District report APIs
 
 exports.addDistrictReport = async (req, res) => {
@@ -187,7 +256,7 @@ exports.addDistrictReport = async (req, res) => {
 }
 
 
-exports.getDistrictReportsByDate=async(req,res)=>{
+exports.getDistrictReportsByDate = async (req, res) => {
   try {
     // console.log(req.query.status);
     // console.log(req.query.date);
@@ -205,10 +274,24 @@ exports.getDistrictReportsByDate=async(req,res)=>{
   }
 }
 
+exports.deleteDistrictReportById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await DistrictReportModel.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
 
 //##############################################   Disposition Report  APIs
 
-exports.addDispositionReport=async(req,res)=>{
+exports.addDispositionReport = async (req, res) => {
   try {
     let toInsert;
     if (Object.entries(req.files).length !== 0) {
@@ -222,11 +305,11 @@ exports.addDispositionReport=async(req,res)=>{
     }
 
     toInsert.userId = req.user.userId;
-  // console.log(toInsert,"HGFFHFG");
-  const alreadyPresent = await DispositionReportModel.findOne({ type: toInsert.type, date: toInsert.date });
-  if (alreadyPresent) {
-    return res.status(409).json({ message: "same date data already entered", alreadyPresent });
-  }
+    // console.log(toInsert,"HGFFHFG");
+    const alreadyPresent = await DispositionReportModel.findOne({ type: toInsert.type, date: toInsert.date });
+    if (alreadyPresent) {
+      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+    }
     const dispositionReportData = new DispositionReportModel(toInsert);
     const result = await dispositionReportData.save();
     if (result) {
@@ -240,7 +323,7 @@ exports.addDispositionReport=async(req,res)=>{
 
 
 //API used in frontend 
-exports.getDispositionReportByDate=async(req,res)=>{
+exports.getDispositionReportByDate = async (req, res) => {
   try {
     // console.log(req.query.status);
     // console.log(req.query.date);
@@ -258,10 +341,24 @@ exports.getDispositionReportByDate=async(req,res)=>{
   }
 }
 
+exports.deleteDispositionReportById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await DispositionReportModel.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
 
 
 //#########################################################  Samplecall APIs
-exports.addSampleCalls=async(req,res)=>{
+exports.addSampleCalls = async (req, res) => {
   try {
     let toInsert;
     if (Object.entries(req.files).length !== 0) {
@@ -275,11 +372,11 @@ exports.addSampleCalls=async(req,res)=>{
     }
 
     toInsert.userId = req.user.userId;
-  // console.log(toInsert,"HGFFHFG");
-  const alreadyPresent = await SampleCallModel.findOne({ type: toInsert.type, date: toInsert.date });
-  if (alreadyPresent) {
-    return res.status(409).json({ message: "same date data already entered", alreadyPresent });
-  }
+    // console.log(toInsert,"HGFFHFG");
+    const alreadyPresent = await SampleCallModel.findOne({ type: toInsert.type, date: toInsert.date });
+    if (alreadyPresent) {
+      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+    }
     const sampleCallData = new SampleCallModel(toInsert);
     const result = await sampleCallData.save();
     if (result) {
@@ -291,7 +388,7 @@ exports.addSampleCalls=async(req,res)=>{
   }
 }
 
-exports.getSampleCallByDate=async(req,res)=>{
+exports.getSampleCallByDate = async (req, res) => {
   try {
     // console.log(req.query.status);..
     // console.log(req.query.date);
@@ -308,3 +405,19 @@ exports.getSampleCallByDate=async(req,res)=>{
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
+
+
+exports.deleteSampleCallById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await SampleCallModel.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
