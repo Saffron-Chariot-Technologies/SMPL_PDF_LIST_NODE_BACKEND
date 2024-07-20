@@ -293,7 +293,7 @@ exports.addSampleCalls=async(req,res)=>{
 
 exports.getSampleCallByDate=async(req,res)=>{
   try {
-    // console.log(req.query.status);
+    // console.log(req.query.status);..
     // console.log(req.query.date);
     const type = req.query.type; // daily or monthly
     let date = req.query.date;
