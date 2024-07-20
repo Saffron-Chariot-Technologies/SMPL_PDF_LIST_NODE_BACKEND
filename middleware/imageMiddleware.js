@@ -30,24 +30,25 @@ const s3Storage = multerS3({
 const upload_images = multer({
     storage: s3Storage,
     limits: {
-        fileSize: 20 * 1024 * 1024 // 10 MB size limit
-    // },
-    // fileFilter: (req, file, cb) => {
-    //     // Allow all files except audio files (.wav and .mp3 only)
-    //     if (file.mimetype.startsWith("audio/")) {
-    //         const filetypes = /wav|mp3/;
-    //         const extname = filetypes.test(file.originalname.toLowerCase());
-
-    //         if (extname) {
-    //             return cb(null, true);
-    //         } else {
-    //             return cb(new Error("Only .wav and .mp3 audio files are allowed!"));
-    //         }
-    //     }
-
-    //     // Allow all non-audio files
-    //     cb(null, true);
+        fileSize: 20 * 1024 * 1024 // 20 MB size limit
     }
 });
 
+
 module.exports = upload_images;
+
+/*
+,
+    fileFilter: (req, file, cb) => {
+        const filetypes = /mp3/;
+        const mimetype = filetypes.test(file.mimetype);
+        const extname = filetypes.test(file.originalname.toLowerCase());
+
+        if (mimetype && extname) {
+            return cb(null, true); // Accept the file
+        } else {
+            return cb(new Error("Only .mp3 audio files are allowed!")); // Reject the file
+        }
+    }
+
+*/
