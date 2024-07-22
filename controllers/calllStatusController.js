@@ -39,19 +39,20 @@ exports.addCallStatusInBound = async (req, res) => {
 }
 
 
-//get API to inBoundCallStatus by type : daily or monthly data
-exports.getAllInBoundCallStatusData = async (req, res) => {
+//get API to inBoundCallStatus  data when selected month : to gve all monthly data of  collection
+exports.getAllMonthlyInBound = async (req, res) => {
   try {
-    const type = req.query.type;
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 15;
+    const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
-    const inBoundCallStatusData = await callStatusModel.find({ type: type }).sort({ date: -1 }).skip(skip).limit(limit);
+    const inBoundCallStatusData = await callStatusModel.find({ type: "monthly" }).sort({ date: -1 }).skip(skip).limit(limit);
     return res.status(200).json({ message: "data found", data: inBoundCallStatusData });
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
+
+
 
 
 exports.deleteInBoundById = async (req, res) => {
@@ -199,6 +200,9 @@ exports.addOutBoundCallStatus = async (req, res) => {
   }
 }
 
+
+
+//Applied on frontend
 exports.getOutBoundCallStatusByDate = async (req, res) => {
   try {
     const type = req.query.type; // daily or monthly
@@ -216,6 +220,10 @@ exports.getOutBoundCallStatusByDate = async (req, res) => {
 }
 
 
+//API to get data 
+exports.getAllMonthlyOutBoundData=async(req,res)=>{
+
+}
 
 
 exports.deleteOutBoundById = async (req, res) => {

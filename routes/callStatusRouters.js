@@ -4,7 +4,7 @@ const auth = require("../middleware/auth");
 const upload=require("../middleware/imageMiddleware.js");
 const {
   addCallStatusInBound,
-  getAllInBoundCallStatusData,
+  getAllMonthlyInBound,
   updateInBoundCallStatus,
   getCallStatusDataByDate,
   addOutBoundCallStatus,
@@ -30,7 +30,7 @@ router.post("/addCallStatus", upload.fields([
   { name: 'image', maxCount: 1 }
 ]),auth,addCallStatusInBound);
 
-router.get("/getAllInBoundCallStatusData",auth,getAllInBoundCallStatusData);
+router.get("/getAllMonthlyInBound",auth,getAllMonthlyInBound);
 
 router.patch("/updateInBoundCallStatus/:id",upload.fields([
   { name: 'graph', maxCount: 1 },
