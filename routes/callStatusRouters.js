@@ -4,7 +4,8 @@ const auth = require("../middleware/auth");
 const upload=require("../middleware/imageMiddleware.js");
 const {
   addCallStatusInBound,
-  getAllMonthlyInBound,
+  getInboundDailySelected,
+  getInBoundMonthlySelected,
   updateInBoundCallStatus,
   getCallStatusDataByDate,
   addOutBoundCallStatus,
@@ -20,7 +21,6 @@ const {
   deleteDistrictReportById,
   deleteDispositionReportById,
   deleteSampleCallById,
-  getInboundByMonth
 } = require("../controllers/calllStatusController.js");
 
 
@@ -30,7 +30,7 @@ router.post("/addCallStatus", upload.fields([
   { name: 'image', maxCount: 1 }
 ]),auth,addCallStatusInBound);
 
-router.get("/getAllMonthlyInBound",auth,getAllMonthlyInBound);
+router.get("/getAllMonthlyInBound",auth,getInBoundMonthlySelected);
 
 router.patch("/updateInBoundCallStatus/:id",upload.fields([
   { name: 'graph', maxCount: 1 },
@@ -39,7 +39,7 @@ router.patch("/updateInBoundCallStatus/:id",upload.fields([
 
 router.get("/getCallStatus",auth,getCallStatusDataByDate);  // to getInBoundcallstatusdata by type: daily  or  monthly   and date
 router.delete("/deleteInBoundCall/:id",auth,deleteInBoundById);
-router.get("/getInBoundByMonth",auth,getInboundByMonth);
+router.get("/getInBoundByMonth",auth,getInboundDailySelected);
 
 
 
