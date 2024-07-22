@@ -148,10 +148,18 @@ exports.getInboundByMonth = async (req, res) => {
       }
     }).sort({ date: -1 }).skip(skip).limit(limit);
     
+    const totalDocs = await InBoundCallStatusModel.find({
+      type:"daily",
+      date: {
+        $gte: new Date(year, month, 1),
+        $lt: new Date(year, month + 1, 1)
+      }
+    });
+
     if (toReturn.length===0) {
       return res.status(200).json({ message: "data not found for this month" ,data:toReturn});
     }
-    return res.status(200).json({ message: "data found success", data: toReturn });
+    return res.status(200).json({ message: "data found success", data:toReturn,totalDocs:toReturn.length });
 
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
