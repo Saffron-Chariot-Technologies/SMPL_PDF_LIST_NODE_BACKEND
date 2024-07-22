@@ -30,7 +30,7 @@ const s3Storage = multerS3({
 const upload_images = multer({
     storage: s3Storage,
     limits: {
-        fileSize: 20 * 1024 * 1024 // 20 MB size limit
+        fileSize: 40 * 1024 * 1024 // 20 MB size limit
     }
 });
 
