@@ -21,7 +21,6 @@ exports.addCallStatusInBound = async (req, res) => {
     }
 
     toInsert.userId = req.user.userId;
-
     // console.log(toInsert,"HGFFHFG");
     const alreadyPresent = await callStatusModel.findOne({ type: toInsert.type, date: toInsert.date });
     if (alreadyPresent) {
@@ -117,33 +116,37 @@ exports.getInboundDailySelected = async (req, res) => {
       date = new Date(date1);
     }
     else {
-      date = new Date();
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
     }
 
     const year = date.getFullYear();
     const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
 
     // Query for records within the specified month and year
-    const toReturn = await InBoundCallStatusModel.find({
+    const query = {
       type: "daily",
       date: {
-        $gte: new Date(year, month, 1),
-        $lt: new Date(year, month + 1, 1)
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
       }
-    }).sort({ date: -1 }).skip(skip).limit(limit);
+    };
 
-    const totalDocs = await InBoundCallStatusModel.find({
-      type: "daily",
-      date: {
-        $gte: new Date(year, month, 1),
-        $lt: new Date(year, month + 1, 1)
-      }
-    });
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await InBoundCallStatusModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await InBoundCallStatusModel.find(query);
 
     if (toReturn.length === 0) {
       return res.status(200).json({ message: "data not found for this month", data: toReturn });
     }
-    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: toReturn.length });
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
 
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
@@ -151,30 +154,50 @@ exports.getInboundDailySelected = async (req, res) => {
 }
 
 
-
-//get API to inBoundCallStatus  data when selected month  : to give all monthly data that year
-exports.getInBoundMonthlySelected = async (req, res) => {
+// API appliled on inBound when selevcted month
+exports.getInBoundMonthlySelected=async(req,res)=>{
   try {
-    // const page = parseInt(req.query.page) || 1;
-    // const limit = parseInt(req.query.limit) || 10;
-    // const skip = (page - 1) * limit;
-
-    const year = req.query.year || (new Date().getFullYear());
-
-    const inBoundCallStatusData = await callStatusModel.find(
-      {
-        type: "monthly",
-        date: {
-          $gte: new Date(year, 0, 1),
-          $lt: new Date(year + 1, 0, 1)
-        }
-      }
-    ).sort({ date: -1 });
-
-    if (inBoundCallStatusData.length === 0) {
-      return res.status(200).json({ message: "data  not found for this year", data: inBoundCallStatusData });
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
     }
-    return res.status(200).json({ message: "data found", data: inBoundCallStatusData });
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    // const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "monthly",
+      date: {
+        $gte: new Date(Date.UTC(year, 0, 1)),
+        $lt: new Date(Date.UTC(year+1, 0, 1))
+      }
+    };
+
+    console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await OutBoundCallStatusModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await OutBoundCallStatusModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
@@ -233,10 +256,58 @@ exports.getOutBoundCallStatusByDate = async (req, res) => {
 }
 
 
-//API to get data 
-exports.getAllMonthlyOutBoundData = async (req, res) => {
+//API to get all inBoundCallStatus which has type:daily, for that month  and year given from frontend.
+exports.getOutboundDailySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
 
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "daily",
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
 }
+    */
+    const toReturn = await OutBoundCallStatusModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await OutBoundCallStatusModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+
+
+
 
 
 exports.deleteOutBoundById = async (req, res) => {
