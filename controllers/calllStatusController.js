@@ -155,9 +155,9 @@ exports.getInboundDailySelected = async (req, res) => {
 //get API to inBoundCallStatus  data when selected month  : to give all monthly data that year
 exports.getInBoundMonthlySelected = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const skip = (page - 1) * limit;
+    // const page = parseInt(req.query.page) || 1;
+    // const limit = parseInt(req.query.limit) || 10;
+    // const skip = (page - 1) * limit;
 
     const year = req.query.year || (new Date().getFullYear());
 
@@ -169,7 +169,7 @@ exports.getInBoundMonthlySelected = async (req, res) => {
           $lt: new Date(year + 1, 0, 1)
         }
       }
-    ).sort({ date: -1 }).skip(skip).limit(limit);
+    ).sort({ date: -1 });
 
     if (inBoundCallStatusData.length === 0) {
       return res.status(200).json({ message: "data  not found for this year", data: inBoundCallStatusData });
