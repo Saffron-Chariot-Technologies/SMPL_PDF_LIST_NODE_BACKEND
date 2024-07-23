@@ -96,6 +96,7 @@ router.get("/getDispositionReportMonthlySelected",auth,calllStatusController.get
 router.post("/addSampleCall",upload.fields([{name: 'voiceCall', maxCount: 1}]),auth,calllStatusController.addSampleCalls);
 router.get("/getSampleCallStatus",auth,calllStatusController.getSampleCallByDate);
 router.delete("/deleteSampleCallById/:id",auth,calllStatusController.deleteSampleCallById);
-
+router.get("/getSampleCallDailySelected",auth,calllStatusController.getSampleCallDailySelected);
+router.get("/getSampleCallMonthlySelected",auth,calllStatusController.getSampleCallMonthlySelected);
 module.exports = router;
 

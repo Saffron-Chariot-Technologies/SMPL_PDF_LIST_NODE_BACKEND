@@ -507,6 +507,7 @@ exports.getDistrictReportMonthlySelected = async (req, res) => {
       }
     };
 
+    console.log(query);
     /*
 {
   type: 'daily',
@@ -518,7 +519,7 @@ exports.getDistrictReportMonthlySelected = async (req, res) => {
     const totalDocs = await DistrictReportModel.find(query);
 
     if (toReturn.length === 0) {
-      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+      return res.status(200).json({ message: "data not found for this year", data: toReturn });
     }
     return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
 
@@ -768,3 +769,102 @@ exports.deleteSampleCallById = async (req, res) => {
   }
 }
 
+
+//API to get all SampleCall  to give all data of selected  date conatining year and month and if not selected date then by default gives current month data.
+exports.getSampleCallDailySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "daily",
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await SampleCallModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await SampleCallModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+// API appliled Sample calls when selected month: gives data  for current year or selected year from given date from frontend.
+exports.getSampleCallMonthlySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    // const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "monthly",
+      date: {
+        $gte: new Date(Date.UTC(year, 0, 1)),
+        $lt: new Date(Date.UTC(year + 1, 0, 1))
+      }
+    };
+
+
+    console.log(query);
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await SampleCallModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await SampleCallModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
