@@ -2,28 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const upload=require("../middleware/imageMiddleware.js");
-// const {
-//   addCallStatusInBound,
-//   getInboundDailySelected,
-//   getInBoundMonthlySelected,
-//   updateInBoundCallStatus,
-//   getCallStatusDataByDate,
-//   addOutBoundCallStatus,
-//   getOutBoundCallStatusByDate,
-//   addDistrictReport,
-//   getDistrictReportsByDate,
-//   addDispositionReport,
-//   getDispositionReportByDate,
-//   addSampleCalls,
-//   getSampleCallByDate,
-//   deleteInBoundById,
-//   deleteOutBoundById,
-//   deleteDistrictReportById,
-//   deleteDispositionReportById,
-//   deleteSampleCallById,
-//   getOutboundDailySelected,
 
-// } = require("../controllers/calllStatusController.js");
 
 const calllStatusController = require("../controllers/calllStatusController.js");
 
