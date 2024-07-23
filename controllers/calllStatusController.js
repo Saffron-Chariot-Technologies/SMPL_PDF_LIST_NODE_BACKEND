@@ -188,9 +188,9 @@ exports.getInBoundMonthlySelected = async (req, res) => {
   date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
 }
     */
-    const toReturn = await OutBoundCallStatusModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+    const toReturn = await InBoundCallStatusModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
 
-    const totalDocs = await OutBoundCallStatusModel.find(query);
+    const totalDocs = await InBoundCallStatusModel.find(query);
 
     if (toReturn.length === 0) {
       return res.status(200).json({ message: "data not found for this month", data: toReturn });
@@ -676,6 +676,8 @@ exports.getDispositionReportMonthlySelected = async (req, res) => {
       }
     };
 
+
+    console.log(query);
     /*
 {
   type: 'daily',

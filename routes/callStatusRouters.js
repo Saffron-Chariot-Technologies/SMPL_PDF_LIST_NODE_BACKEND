@@ -41,8 +41,8 @@ router.patch("/updateInBoundCallStatus/:id",upload.fields([
 
 router.get("/getCallStatus",auth,calllStatusController.getCallStatusDataByDate);  // to getInBoundcallstatusdata by type: daily  or  monthly   and date
 router.delete("/deleteInBoundCall/:id",auth,calllStatusController.deleteInBoundById);
-router.get("/getInBoundByMonth",auth,calllStatusController.getInboundDailySelected); // to get InBOunddat when selected  daily
-router.get("/getAllMonthlyInBound",auth,calllStatusController.getInBoundMonthlySelected); // to get InBouyd when monthly selected
+router.get("/getInboundDailySelected",auth,calllStatusController.getInboundDailySelected); // to get InBOunddat when selected  daily
+router.get("/getInBoundMonthlySelected",auth,calllStatusController.getInBoundMonthlySelected); // to get InBouyd when monthly selected
 
 
 
@@ -87,7 +87,7 @@ router.get("/getDispositionReportByDate",auth,calllStatusController.getDispositi
 router.delete("/deleteDispositionById/:id",auth,calllStatusController.deleteDispositionReportById);
 
 router.get("/getDispositionReportDailySelected",auth,calllStatusController.getDispositionReportDailySelected);
-router.get("getDispositionReportMonthlySelected",auth,calllStatusController.getDispositionReportMonthlySelected);
+router.get("/getDispositionReportMonthlySelected",auth,calllStatusController.getDispositionReportMonthlySelected);
 
 
 
