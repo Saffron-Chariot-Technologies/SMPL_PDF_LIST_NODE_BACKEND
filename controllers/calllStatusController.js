@@ -155,7 +155,7 @@ exports.getInboundDailySelected = async (req, res) => {
 
 
 // API appliled on inBound when selevcted month
-exports.getInBoundMonthlySelected=async(req,res)=>{
+exports.getInBoundMonthlySelected = async (req, res) => {
   try {
     let date;
     const page = parseInt(req.query.page) || 1;
@@ -178,11 +178,11 @@ exports.getInBoundMonthlySelected=async(req,res)=>{
       type: "monthly",
       date: {
         $gte: new Date(Date.UTC(year, 0, 1)),
-        $lt: new Date(Date.UTC(year+1, 0, 1))
+        $lt: new Date(Date.UTC(year + 1, 0, 1))
       }
     };
 
-    console.log(query);  
+    console.log(query);
     /*
 {
   type: 'daily',
@@ -256,7 +256,7 @@ exports.getOutBoundCallStatusByDate = async (req, res) => {
 }
 
 
-//API to get all inBoundCallStatus which has type:daily, for that month  and year given from frontend.
+//API to get all OutBoundCallStatus  to give all data of selected  date conatining year and month and if not selected date then by default gives current month data.
 exports.getOutboundDailySelected = async (req, res) => {
   try {
     let date;
@@ -305,9 +305,54 @@ exports.getOutboundDailySelected = async (req, res) => {
   }
 }
 
+// API appliled ootBound when selected month: gives data  for current year or selected year from given date from frontend.
+exports.getOutBoundMonthlySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
 
+    const year = date.getFullYear();
+    // const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
 
+    // Query for records within the specified month and year
+    const query = {
+      type: "monthly",
+      date: {
+        $gte: new Date(Date.UTC(year, 0, 1)),
+        $lt: new Date(Date.UTC(year + 1, 0, 1))
+      }
+    };
 
+    console.log(query);
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await OutBoundCallStatusModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await OutBoundCallStatusModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
 
 
 exports.deleteOutBoundById = async (req, res) => {
@@ -323,6 +368,8 @@ exports.deleteOutBoundById = async (req, res) => {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
+
+
 //######################################### District report APIs
 
 exports.addDistrictReport = async (req, res) => {
@@ -387,6 +434,107 @@ exports.deleteDistrictReportById = async (req, res) => {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
+
+//API to get all DistrictReport  to give all data of selected  date conatining year and month and if not selected date then by default gives current month data.
+exports.getDistrictReportDailySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "daily",
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await DistrictReportModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await DistrictReportModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+// API appliled DistrictReport when selected month: gives data  for current year or selected year from given date from frontend.
+exports.getDistrictReportMonthlySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    // const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "monthly",
+      date: {
+        $gte: new Date(Date.UTC(year, 0, 1)),
+        $lt: new Date(Date.UTC(year + 1, 0, 1))
+      }
+    };
+
+    console.log(query);
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await DistrictReportModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await DistrictReportModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+
+
 
 
 //##############################################   Disposition Report  APIs
@@ -454,6 +602,110 @@ exports.deleteDispositionReportById = async (req, res) => {
     return res.status(500).json({ message: "something went wrong", error: error.message });
   }
 }
+
+
+
+//API to get all DispositionReport  to give all data of selected  date conatining year and month and if not selected date then by default gives current month data.
+exports.getDispositionReportDailySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "daily",
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await DispositionReportModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await DispositionReportModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+// API appliled DispositionReport when selected month: gives data  for current year or selected year from given date from frontend.
+exports.getDispositionReportMonthlySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    // const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "monthly",
+      date: {
+        $gte: new Date(Date.UTC(year, 0, 1)),
+        $lt: new Date(Date.UTC(year + 1, 0, 1))
+      }
+    };
+
+    console.log(query);
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await DispositionReportModel.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await DispositionReportModel.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+
+
+
 
 
 
