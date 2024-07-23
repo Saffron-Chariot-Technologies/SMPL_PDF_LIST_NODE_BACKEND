@@ -182,7 +182,6 @@ exports.getInBoundMonthlySelected = async (req, res) => {
       }
     };
 
-    console.log(query);
     /*
 {
   type: 'daily',
@@ -333,7 +332,6 @@ exports.getOutBoundMonthlySelected = async (req, res) => {
       }
     };
 
-    console.log(query);
     /*
 {
   type: 'daily',
@@ -362,7 +360,6 @@ exports.deleteOutBoundById = async (req, res) => {
     if (result?.deletedCount === 1) {
       return res.status(200).json({ message: "data deleted success" });
     }
-    // console.log(result,"hdgdg");
     return res.status(200).json({ message: "data not found to delete" });
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
@@ -379,14 +376,12 @@ exports.addDistrictReport = async (req, res) => {
       toInsert = JSON.parse(req.body.data);
       for (let i in req.files) {
         toInsert[i] = req.files[i][0]?.location;
-        // console.log(i);
       }
     } else {
       toInsert = JSON.parse(req.body.data);
     }
 
     toInsert.userId = req.user.userId;
-    // console.log(toInsert,"HGFFHFG");
     const alreadyPresent = await DistrictReportModel.findOne({ type: toInsert.type, date: toInsert.date });
     if (alreadyPresent) {
       return res.status(409).json({ message: "same date data already entered", alreadyPresent });
@@ -512,7 +507,6 @@ exports.getDistrictReportMonthlySelected = async (req, res) => {
       }
     };
 
-    console.log(query);
     /*
 {
   type: 'daily',
@@ -682,7 +676,6 @@ exports.getDispositionReportMonthlySelected = async (req, res) => {
       }
     };
 
-    console.log(query);
     /*
 {
   type: 'daily',
