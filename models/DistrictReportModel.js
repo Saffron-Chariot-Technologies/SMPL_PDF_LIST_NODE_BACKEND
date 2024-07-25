@@ -10,7 +10,7 @@ const districtReportSchema=new mongoose.Schema({
  date:{type:Date,required:true},
  excel:{type:String,required:false},
  graph:{type:String,required:false}
-}
+},{timestamps:true}
 );
 
 module.exports=mongoose.model("DistrictReport",districtReportSchema);

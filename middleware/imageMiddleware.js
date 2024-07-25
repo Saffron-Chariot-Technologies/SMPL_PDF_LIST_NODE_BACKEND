@@ -28,10 +28,7 @@ const s3Storage = multerS3({
 });
 
 const upload_images = multer({
-    storage: s3Storage,
-    limits: {
-        fileSize: 40 * 1024 * 1024 // 20 MB size limit
-    }
+    storage: s3Storage
 });
 
 
@@ -50,5 +47,14 @@ module.exports = upload_images;
             return cb(new Error("Only .mp3 audio files are allowed!")); // Reject the file
         }
     }
+
+
+
+    const upload_images = multer({
+    storage: s3Storage,
+    limits: {
+        fileSize: 40 * 1024 * 1024 // 20 MB size limit
+    }
+});
 
 */

@@ -11,7 +11,7 @@ const dispositionReportSchema=new mongoose.Schema({
  table1:{type:String,required:false},
  graph:{type:String,required:false},
  table2:{type:String,required:false},
-}
+},{timestamps:true}
 );
 
 module.exports=mongoose.model("DispositionReport",dispositionReportSchema);
