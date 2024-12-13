@@ -11,6 +11,8 @@ const CallsStatusSchema = new mongoose.Schema(
         ACHT: { type: String, required: true },
         graph: {type:String, required: false },
         image: {type:String, required: false },
+        query: {type:String, required: false },
+        grievance: {type:String, required: false },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",
