@@ -6,7 +6,6 @@ const upload=require("../middleware/imageMiddleware.js");
 
 const calllStatusController = require("../controllers/calllStatusController.js");
 
-//inBound
 router.post("/addCallStatus", upload.fields([
   { name: 'graph', maxCount: 1 },
   { name: 'image', maxCount: 1 }
