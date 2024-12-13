@@ -5,7 +5,8 @@ const callStatusModel = require("../models/InBoundCallStatusModel.js");
 const OutBoundCallStatusModel = require("../models/OutBoundCallStatusModel.js");
 const SampleCallModel = require("../models/SampleCallModel.js");
 
-exports.addCallStatusInBound = async (req, res) => {
+exports.     
+addCallStatusInBound = async (req, res) => {
   try {
     // console.log(req,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
 
