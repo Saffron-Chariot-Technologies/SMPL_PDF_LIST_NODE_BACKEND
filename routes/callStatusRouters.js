@@ -17,7 +17,7 @@ router.patch("/updateInBoundCallStatus/:id", upload.fields([
   { name: 'image', maxCount: 1 }
 ]), auth, calllStatusController.updateInBoundCallStatus);
 
-router.get("/getCallStatus", auth, calllStatusController.getCallStatusDataByDate);  // to getInBoundcallstatusdata by type: daily  or  monthly   and date
+router.get("/getCallStatus", calllStatusController.getCallStatusDataByDate);  // to getInBoundcallstatusdata by type: daily  or  monthly   and date
 router.delete("/deleteInBoundCall/:id", auth, calllStatusController.deleteInBoundById);
 router.get("/getInboundDailySelected", auth, calllStatusController.getInboundDailySelected); // to get InBOunddat when selected  daily
 router.get("/getInBoundMonthlySelected", auth, calllStatusController.getInBoundMonthlySelected); // to get InBouyd when monthly selected
@@ -31,7 +31,7 @@ router.post("/addOutBoundCallStatus", upload.fields([
 ]), auth, calllStatusController.addOutBoundCallStatus);
 
 
-router.get("/getOutBoundCallStatusByDate", auth, calllStatusController.getOutBoundCallStatusByDate);
+router.get("/getOutBoundCallStatusByDate",  calllStatusController.getOutBoundCallStatusByDate);
 router.delete("/deleteOutBoundById/:id", auth, calllStatusController.deleteOutBoundById);
 
 router.get("/getOutboundDailySelected", auth, calllStatusController.getOutboundDailySelected);
@@ -47,7 +47,7 @@ router.post("/addDistrictReport", upload.fields([
   { name: 'graph', maxCount: 1 }
 ]), auth, calllStatusController.addDistrictReport);
 
-router.get("/getDistrictReportByDate", auth, calllStatusController.getDistrictReportsByDate);
+router.get("/getDistrictReportByDate",  calllStatusController.getDistrictReportsByDate);
 router.delete("/deleteDistrictReportById/:id", auth, calllStatusController.deleteDistrictReportById);
 
 router.get("/getDistrictReportDailySelected", auth, calllStatusController.getDistrictReportDailySelected);
@@ -62,7 +62,7 @@ router.post("/addDispositionReport", upload.fields([
   { name: 'table2', maxCount: 1 },
 ]), auth, calllStatusController.addDispositionReport);
 
-router.get("/getDispositionReportByDate", auth, calllStatusController.getDispositionReportByDate);
+router.get("/getDispositionReportByDate",  calllStatusController.getDispositionReportByDate);
 router.delete("/deleteDispositionById/:id", auth, calllStatusController.deleteDispositionReportById);
 
 router.get("/getDispositionReportDailySelected", auth, calllStatusController.getDispositionReportDailySelected);
@@ -73,7 +73,7 @@ router.get("/getDispositionReportMonthlySelected", auth, calllStatusController.g
 //samplecall APIs
 
 router.post("/addSampleCall", upload.fields([{ name: 'voiceCall', maxCount: 1 }]), auth, calllStatusController.addSampleCalls);
-router.get("/getSampleCallStatus", auth, calllStatusController.getSampleCallByDate);
+router.get("/getSampleCallStatus", calllStatusController.getSampleCallByDate);
 router.delete("/deleteSampleCallById/:id", auth, calllStatusController.deleteSampleCallById);
 router.get("/getSampleCallDailySelected", auth, calllStatusController.getSampleCallDailySelected);
 router.get("/getSampleCallMonthlySelected", auth, calllStatusController.getSampleCallMonthlySelected);
@@ -83,7 +83,7 @@ router.post("/addAppointment", upload.fields([
   { name: 'image', maxCount: 1 }
 ]), auth, calllStatusController.addAppointment);
 // getAppointmentByDate
-router.get("/getAppointmentByDate", auth, calllStatusController.getAppointmentByDate);
+router.get("/getAppointmentByDate", calllStatusController.getAppointmentByDate);
 // getallAppointmentByDate
 router.get("/getAllAppointments", auth, calllStatusController.getAllAppointments);
 // router.get('/getAppointmentsBydaily',auth,calllStatusController.getAppointmentsBydaily)
@@ -104,6 +104,6 @@ router.get('/getsatifactionsByMonth',auth, calllStatusController.getsatifactions
 
 router.get("getAllsatifactions", auth, calllStatusController.getAllsatifactions);
 router.delete('/deletesatifactionById/:id',auth,calllStatusController.deletesatifactionById)
-router.get('/getsatifactionByDate',auth, calllStatusController.getsatifactionByDate )
+router.get('/getsatifactionByDate', calllStatusController.getsatifactionByDate )
 module.exports = router;
 
