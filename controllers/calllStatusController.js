@@ -1,9 +1,11 @@
+const Appointment = require("../models/Appointment.js");
 const DispositionReportModel = require("../models/DispositionReportModel.js");
 const DistrictReportModel = require("../models/DistrictReportModel.js");
 const InBoundCallStatusModel = require("../models/InBoundCallStatusModel.js");
 const callStatusModel = require("../models/InBoundCallStatusModel.js");
 const OutBoundCallStatusModel = require("../models/OutBoundCallStatusModel.js");
 const SampleCallModel = require("../models/SampleCallModel.js");
+const satifaction = require("../models/satifaction.js");
 
 exports.     
 addCallStatusInBound = async (req, res) => {
@@ -864,6 +866,349 @@ exports.getSampleCallMonthlySelected = async (req, res) => {
       return res.status(200).json({ message: "data not found for this month", data: toReturn });
     }
     return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+
+
+exports.addAppointment = async (req, res) => {
+  try {
+    let toInsert;
+    if (Object.entries(req.files).length !== 0) {
+      toInsert = JSON.parse(req.body.data);
+      for (let i in req.files) {
+        toInsert[i] = req.files[i][0]?.location;
+        // console.log(i);
+      }
+    } else {
+      toInsert = JSON.parse(req.body.data);
+    }
+
+    toInsert.userId = req.user.userId;
+    // console.log(toInsert,"HGFFHFG");
+    const alreadyPresent = await Appointment.findOne({ type: toInsert.type, date: toInsert.date });
+    if (alreadyPresent) {
+      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+    }
+    const appointment = new Appointment(toInsert);
+    const result = await appointment.save();
+    if (result) {
+      return res.status(200).json({ message: "data added successfully", data: result });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+
+  }
+}
+
+exports.getAppointmentByDate = async (req, res) => {
+  try {
+    // console.log(req.query.status);
+    // console.log(req.query.date);
+    const type = req.query.type; // daily or monthly
+    let date = req.query.date;
+    date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
+    const toReturn = await Appointment.findOne({ type: type, date: date });
+    if (!toReturn) {
+      return res.status(200).json({ message: "data not found for ths date and type" });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+}
+exports.getAllAppointments = async (req, res) => {
+  try {
+    const appointments = await Appointment.find();
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(200).json({ message: "No appointments found", data: [] });
+    }
+
+    return res.status(200).json({ message: "Appointments retrieved successfully", data: appointments });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+};
+
+
+exports.getAllAppointmentsDailySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "daily",
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await Appointment.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await Appointment.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+};
+exports.getAppointmentsByMonth = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+
+    if (date1) {
+      date = new Date(date1);
+    } else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for appointments within the specified month and year
+    const query = {
+      type: "monthly", // Adjust if your Appointment model has a different type structure
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // Fetch paginated data
+    const appointments = await Appointment.find(query)
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count
+    const totalDocs = await Appointment.countDocuments(query);
+
+    if (appointments.length === 0) {
+      return res.status(200).json({ message: "No appointments found for this month", data: [], totalDocs: 0 });
+    }
+
+    return res.status(200).json({ message: "Appointments retrieved successfully", data: appointments, totalDocs });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+};
+exports.deleteAppointmentById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await Appointment.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+};
+
+
+
+
+
+
+
+exports.satifaction = async (req, res) => {
+  try {
+    let toInsert;
+    if (Object.entries(req.files).length !== 0) {
+      toInsert = JSON.parse(req.body.data);
+      for (let i in req.files) {
+        toInsert[i] = req.files[i][0]?.location;
+        // console.log(i);
+      }
+    } else {
+      toInsert = JSON.parse(req.body.data);
+    }
+
+    toInsert.userId = req.user.userId;
+    // console.log(toInsert,"HGFFHFG");
+    const alreadyPresent = await satifaction.findOne({ type: toInsert.type, date: toInsert.date });
+    if (alreadyPresent) {
+      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+    }
+    const satifact = new satifaction(toInsert);
+    const result = await satifact.save();
+    if (result) {
+      return res.status(200).json({ message: "data added successfully", data: result });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+
+  }
+}
+
+exports.getAllsatifactions = async (req, res) => {
+  try {
+    const satifactions = await satifaction.find();
+
+    if (!satifactions || satifactions.length === 0) {
+      return res.status(200).json({ message: "No satifactions found", data: [] });
+    }
+
+    return res.status(200).json({ message: "satifactions retrieved successfully", data: satifactions });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+};
+exports.deletesatifactionById = async (req, res) => {
+  try {
+    const docId = req.params.id;
+    const result = await satifaction.deleteOne({ _id: new Object(docId) });
+    if (result?.deletedCount === 1) {
+      return res.status(200).json({ message: "data deleted success" });
+    }
+    // console.log(result,"hdgdg");
+    return res.status(200).json({ message: "data not found to delete" });
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+};
+
+exports.getAllsatifactionDailySelected = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+    if (date1) {
+      date = new Date(date1);
+    }
+    else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for records within the specified month and year
+    const query = {
+      type: "daily",
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // console.log(query);  
+    /*
+{
+  type: 'daily',
+  date: { '$gte': 2024-07-01T00:00:00.000Z, '$lt': 2024-08-01T00:00:00.000Z }
+}
+    */
+    const toReturn = await satifaction.find(query).sort({ date: -1 }).skip(skip).limit(limit);
+
+    const totalDocs = await satifaction.find(query);
+
+    if (toReturn.length === 0) {
+      return res.status(200).json({ message: "data not found for this month", data: toReturn });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn, totalDocs: totalDocs.length });
+
+  } catch (error) {
+    return res.status(500).json({ message: "something went wrong", error: error.message });
+  }
+};
+exports.getsatifactionsByMonth = async (req, res) => {
+  try {
+    let date;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 15;
+    const skip = (page - 1) * limit;
+    let date1 = req.query.date;
+
+    if (date1) {
+      date = new Date(date1);
+    } else {
+      const temp = new Date();
+      date = new Date(Date.UTC(temp.getFullYear(), temp.getMonth(), temp.getDate()));
+    }
+
+    const year = date.getFullYear();
+    const month = date.getMonth(); // 0-indexed (0 for January, 1 for February, etc.)
+
+    // Query for satifactions within the specified month and year
+    const query = {
+      type: "monthly", // Adjust if your satifaction model has a different type structure
+      date: {
+        $gte: new Date(Date.UTC(year, month, 1)),
+        $lt: new Date(Date.UTC(year, month + 1, 1))
+      }
+    };
+
+    // Fetch paginated data
+    const satifactions = await satifaction.find(query)
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count
+    const totalDocs = await satifaction.countDocuments(query);
+
+    if (satifactions.length === 0) {
+      return res.status(200).json({ message: "No satifactions found for this month", data: [], totalDocs: 0 });
+    }
+
+    return res.status(200).json({ message: "satifactions retrieved successfully", data: satifactions, totalDocs });
+  } catch (error) {
+    return res.status(500).json({ message: "Something went wrong", error: error.message });
+  }
+};
+
+exports.getsatifactionByDate = async (req, res) => {
+  try {
+    // console.log(req.query.status);
+    // console.log(req.query.date);
+    const type = req.query.type; // daily or monthly
+    let date = req.query.date;
+    date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
+    const toReturn = await satifaction.findOne({ type: type, date: date });
+    if (!toReturn) {
+      return res.status(200).json({ message: "data not found for ths date and type" });
+    }
+    return res.status(200).json({ message: "data found success", data: toReturn });
 
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
