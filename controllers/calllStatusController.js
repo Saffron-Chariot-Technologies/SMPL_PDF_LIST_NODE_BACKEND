@@ -209,33 +209,38 @@ exports.getInBoundMonthlySelected = async (req, res) => {
 exports.addOutBoundCallStatus = async (req, res) => {
   try {
     let toInsert;
-    if (Object.entries(req.files).length !== 0) {
+    let image = []; // Initialize as an empty array
+    if (Object.entries(req.files).length !== 0 && req.files.image) {
       toInsert = JSON.parse(req.body.data);
-      for (let i in req.files) {
-        toInsert[i] = req.files[i][0]?.location;
-        // console.log(i);
-      }
+      image = [req.files.image[0]?.location]; // Single image URL as an array
     } else {
       toInsert = JSON.parse(req.body.data);
     }
 
     toInsert.userId = req.user.userId;
-    // console.log(toInsert,"HGFFHFG");
     const alreadyPresent = await OutBoundCallStatusModel.findOne({ type: toInsert.type, date: toInsert.date });
+    let result;
     if (alreadyPresent) {
-      return res.status(409).json({ message: "same date data already entered", alreadyPresent });
+      console.log(alreadyPresent, "existing data");
+      // Append new image to existing images if present
+      if (image.length > 0) {
+        alreadyPresent.image = [...alreadyPresent.image, ...image]; // Flatten and append
+      }
+      result = await alreadyPresent.save();
+      return res.status(409).json({ message: `Data of given type:${toInsert.type} and date:${toInsert.date} is updated !!`, alreadyPresent });
+    } else {
+      toInsert.image = image; // Assign flat array of image URLs
+      const outBoundData = new OutBoundCallStatusModel(toInsert);
+      result = await outBoundData.save();
     }
-    const outBoundData = new OutBoundCallStatusModel(toInsert);
-    const result = await outBoundData.save();
+
     if (result) {
-      return res.status(200).json({ message: "data added successfully", data: result });
+      return res.status(200).json({ message: `Data of given type:${toInsert.type} and date:${toInsert.date} is added !!`, data: result });
     }
   } catch (error) {
     return res.status(500).json({ message: "something went wrong", error: error.message });
-
   }
-}
-
+};
 
 
 //Applied on frontend
@@ -246,12 +251,12 @@ exports.getOutBoundCallStatusByDate = async (req, res) => {
     date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
     const toReturn = await OutBoundCallStatusModel.findOne({ type: type, date: date });
     if (!toReturn) {
-      return res.status(200).json({ message: "data not found for ths date and type" });
+      return res.status(200).json({ message: "Data not found for this date and type" });
     }
-    return res.status(200).json({ message: "data found success", data: toReturn });
+    return res.status(200).json({ message: "Data found success", data: toReturn });
 
   } catch (error) {
-    return res.status(500).json({ message: "something went wrong", error: error.message });
+    return res.status(500).json({ message: "Something went wrong !", error: error.message });
   }
 }
 
@@ -758,8 +763,8 @@ exports.addSampleCalls = async (req, res) => {
     let data, toInsert, voiceCallsData = [], temp, result;
     if (Object.entries(req.files).length !== 0) {
       data = JSON.parse(req.body.data);
-    console.log("fhgjff");
-    
+      console.log("fhgjff");
+
       //handling files
       req.files?.voiceCall?.map((t) => {
         temp = {
@@ -778,7 +783,7 @@ exports.addSampleCalls = async (req, res) => {
     const dateOnly = getDateFromTime(data?.date)
     const alreadyPresent = await SampleCallModel.findOne({ type: data.type, date: new Date(dateOnly) });
     if (alreadyPresent) {
-      
+
       alreadyPresent.voiceCall.push(...voiceCallsData);
       result = await alreadyPresent.save();
     }
