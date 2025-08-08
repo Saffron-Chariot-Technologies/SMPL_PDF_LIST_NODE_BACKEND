@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const upload = require("../middleware/imageMiddleware.js");
-const upload = require("../middleware/imageMiddleware.js");
+// const upload = require("../middleware/imageMiddleware.js");
 
 
 const calllStatusController = require("../controllers/calllStatusController.js");
@@ -65,6 +65,7 @@ router.post("/addDispositionReport", upload.fields([
   { name: 'table2', maxCount: 1 },
 ]), auth, calllStatusController.addDispositionReport);
 
+//
 router.get("/getDispositionReportByDate",  calllStatusController.getDispositionReportByDate);
 router.delete("/deleteDispositionById/:id", auth, calllStatusController.deleteDispositionReportById);
 
