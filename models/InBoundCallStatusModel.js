@@ -18,7 +18,7 @@ const CallsStatusSchema = new mongoose.Schema(
             ref: "User",
             required: true,
         },
-        type:{type:String,required:true}  //  input should be "monthly" , or "daily"  , for filtering data based on monthly or daily eneterd data.
+       type: { type: String, enum: ["monthly", "daily"], required: true }  //  input should be "monthly" , or "daily"  , for filtering data based on monthly or daily eneterd data.
     },
     { timestamps: true }
 ); // This adds createdAt and updatedAt fields

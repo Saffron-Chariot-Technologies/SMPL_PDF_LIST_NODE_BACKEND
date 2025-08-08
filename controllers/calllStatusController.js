@@ -247,8 +247,9 @@ exports.getOutBoundCallStatusByDate = async (req, res) => {
     let date = req.query.date;
     date = new Date(date); // convert string format of date into object. since date object cannot comes  in query ,being converted to string , nd date object is not convertabl in string
     const toReturn = await OutBoundCallStatusModel.findOne({ type: type, date: date });
+    console.log(toReturn,"toReturn");
     if (!toReturn) {
-      return res.status(200).json({ message: "data not found for ths date and type" });
+      return res.status(200).json({ message: "data not found for this date and type" });
     }
     return res.status(200).json({ message: "data found success", data: toReturn });
 

@@ -6,7 +6,7 @@ const districtReportSchema=new mongoose.Schema({
     ref:"User",
     required:true
  },
- type:{type:String,required:true},
+ type: { type: String, enum: ["monthly", "daily"], required: true },
  date:{type:Date,required:true},
  excel:{type:String,required:false},
  graph:{type:String,required:false}

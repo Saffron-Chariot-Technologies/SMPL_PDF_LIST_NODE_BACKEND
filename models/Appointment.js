@@ -8,7 +8,7 @@ const AppointmentSchema=new mongoose.Schema({
     },
     date:{type:Date,required:true},
     image:{type:String,required:false},
-    type:{type:String,required:true}
+    type: { type: String, enum: ["monthly", "daily"], required: true }
 },{timestamps:true});
 
 module.exports=mongoose.model("Appointment",AppointmentSchema);

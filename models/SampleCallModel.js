@@ -1,14 +1,14 @@
-const mongoose=require("mongoose");
+const mongoose = require("mongoose");
 
-const sampleCallSchema=new mongoose.Schema({
-    userId:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"User",
-        required:true
-     },
-     type:{type:String,required:true},
-     date:{type:Date,required:true},
-     voiceCall:{type:String,required:false},
-},{timestamps:true})
+const sampleCallSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true
+    },
+    type: { type: String, enum: ["monthly", "daily"], required: true },
+    date: { type: Date, required: true },
+    voiceCall: { type: String, required: false },
+}, { timestamps: true })
 
-module.exports=mongoose.model("SampleCalls",sampleCallSchema);
+module.exports = mongoose.model("SampleCalls", sampleCallSchema);
