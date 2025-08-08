@@ -11,13 +11,11 @@ router.post("/addCallStatus", upload.fields([
   { name: 'graph', maxCount: 1 },
   { name: 'image', maxCount: 1 }
 ]), auth, calllStatusController.addCallStatusInBound);
-]), auth, calllStatusController.addCallStatusInBound);
 
 
 router.patch("/updateInBoundCallStatus/:id",  upload.fields([
   { name: 'graph', maxCount: 1 },
   { name: 'image', maxCount: 1 }
-]), auth, calllStatusController.updateInBoundCallStatus);
 ]), auth, calllStatusController.updateInBoundCallStatus);
 
 router.get("/getCallStatus", calllStatusController.getCallStatusDataByDate);  // to getInBoundcallstatusdata by type: daily  or  monthly   and date
