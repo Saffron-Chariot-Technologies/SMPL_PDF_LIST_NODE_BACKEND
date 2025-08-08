@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const upload = require("../middleware/imageMiddleware.js");
+// const upload = require("../middleware/imageMiddleware.js");
 
 
 const calllStatusController = require("../controllers/calllStatusController.js");
@@ -12,7 +13,7 @@ router.post("/addCallStatus", upload.fields([
 ]), auth, calllStatusController.addCallStatusInBound);
 
 
-router.patch("/updateInBoundCallStatus/:id", upload.fields([
+router.patch("/updateInBoundCallStatus/:id",  upload.fields([
   { name: 'graph', maxCount: 1 },
   { name: 'image', maxCount: 1 }
 ]), auth, calllStatusController.updateInBoundCallStatus);
@@ -34,6 +35,8 @@ router.post("/addOutBoundCallStatus", upload.fields([
 router.get("/getOutBoundCallStatusByDate",  calllStatusController.getOutBoundCallStatusByDate);
 router.delete("/deleteOutBoundById/:id", auth, calllStatusController.deleteOutBoundById);
 
+router.get("/getOutboundDailySelected", auth, calllStatusController.getOutboundDailySelected);
+router.get("/getOutBoundMonthlySelected", auth, calllStatusController.getOutBoundMonthlySelected);
 router.get("/getOutboundDailySelected", auth, calllStatusController.getOutboundDailySelected);
 router.get("/getOutBoundMonthlySelected", auth, calllStatusController.getOutBoundMonthlySelected);
 
@@ -62,6 +65,7 @@ router.post("/addDispositionReport", upload.fields([
   { name: 'table2', maxCount: 1 },
 ]), auth, calllStatusController.addDispositionReport);
 
+//
 router.get("/getDispositionReportByDate",  calllStatusController.getDispositionReportByDate);
 router.delete("/deleteDispositionById/:id", auth, calllStatusController.deleteDispositionReportById);
 
